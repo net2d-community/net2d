@@ -19,7 +19,7 @@ docker compose build
 docker compose up
 ```
 
-Após a inicialização, a aplicação estará disponível em [http://<ip-do-servidor>:8000/portal/install/](http://<ip-do-servidor>:8000/portal/install/)
+Após a inicialização, a aplicação estará disponível em [http://ip-do-servidor>:8000/portal/install/](http://ip-do-servidor:8000/portal/install/)
 
 4. (Opcional) Verifique o status do container
 ```
