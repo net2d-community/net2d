@@ -1,0 +1,105 @@
+{% extends "portal/base_page.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <div class="card mt-3">
+    <div class="card-header bg-success-subtle">
+      <div class="d-flex">
+        <strong>Instalação</strong>
+      </div>
+    </div>
+    <div class="card-body py-3 px-1">
+        <div class="card-body">
+          <h5 class="card-title">Olá,</h5>
+          <p class="card-text">Insira as informações abaixo para criar um ambiente mínimo no Netbox para testar o Net2d.</p>
+          <form action="{% url 'portal:index' %}" method="POST">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="inputUrl1" class="form-label">URL Netbox</label>
+                  <input type="text" class="form-control" id="inputUrl1" aria-describedby="urlHelp" name="netbox_url" value="{{ form.netbox_url.value}}">
+                  <div id="urlHelp" class="form-text">Ex.: http://192.168.2.30:8080/</div>
+                </div>
+                <div class="mb-3">
+                  <label for="inputToken" class="form-label">Token API</label>
+                  <input type="text" class="form-control" id="inputToken" name="netbox_api_token" value="{{ form.netbox_api_token.value}}">
+                  <div id="tokenHelp" class="form-text">Acesse o Netbox em: "Admin" > "API Tokens"</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="card">
+                  <div class="card-header">
+                    <strong>Network</strong>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-4">
+                        <div class="mb-3">
+                          <label for="inputVlan" class="form-label">Vlan Id:</label>
+                          <input type="number" class="form-control" id="inputVlan" name="vlan_id" value="{{ form.vlan_id.value}}">
+                          <div id="vlanHelp" class="form-text">Id da Vlan</div>
+                        </div>
+                      </div>
+                      <div class="col-8">
+                        <div class="mb-3">
+                          <label for="inputVlan" class="form-label">Nome da Vlan:</label>
+                          <input type="text" class="form-control" id="inputVlan" name="vlan_name" value="{{ form.vlan_name.value}}">
+                          <div id="vlanHelp" class="form-text">Ex: laboratorio-net2d</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="inputPrefix4" class="form-label">Prefixo IPv4:</label>
+                      <input type="text" class="form-control" id="inputPrefix4" name="prefix4" value="{{ form.prefix4.value}}">
+                      <div id="prefix4Help" class="form-text">Ex.: 192.168.2.0/24</div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="inputPrefix6" class="form-label">Prefixo IPv6:</label>
+                      <input type="text" class="form-control" id="inputPrefix6" name="prefix6" value="{{ form.prefix6.value}}">
+                      <div id="prefix6Help" class="form-text">Ex: 2001:db8:cafe::/64</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card">
+                  <div class="card-header">
+                    <strong>Device</strong>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label for="inputDeviceName" class="form-label">Nome do dispositivo:</label>
+                      <input type="text" class="form-control" id="inputDeviceName" name="device_name" value="{{ form.device_name.value}}">
+                      <div id="deviceNameHelp" class="form-text">Ex.: sw-lab-01</div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="inputAddress4" class="form-label">IP Gerência IPv4:</label>
+                      <input type="text" class="form-control" id="inputAddress4" name="device_address4" value="{{ form.device_address4.value}}">
+                      <div id="address4Help" class="form-text">Ex.: 192.168.3.196/24</div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="inputAddress6" class="form-label">IP Gerência IPv6</label>
+                      <input type="text" class="form-control" id="inputAddress6" name="device_address6" value="{{ form.device_address6.value}}">
+                      <div id="address6Help" class="form-text">Ex: 2001:db8:cafe::196/64</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-success mt-4">OK</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer mt-4">
+      <div class="text-center">
+        <kbd class="text-success">Net2d</kbd>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
