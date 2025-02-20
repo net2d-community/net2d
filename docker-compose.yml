@@ -9,8 +9,8 @@ services:
   celery:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: "celery -A net2d worker --loglevel=INFO"
+      dockerfile: DockerfileCelery
+    command: celery -A net2d worker --loglevel=INFO
     environment:
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
@@ -21,13 +21,20 @@ services:
 
   api:
     build: .
-    # command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     networks:
       - redis-net
+    volumes:
+      - api_data:/app
+    depends_on:
+      - redis
+      - celery
+
+volumes:
+  api_data:
+    name: "net2d-api"
 
 networks:
   redis-net:

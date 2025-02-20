@@ -1,9 +1,12 @@
 import pynetbox
 import pprint
+import logging
 from api.tasks import add, sw_deploy_task
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from netmiko import ConnectHandler
+
+logger = logging.getLogger(__name__)
 
 # netbox_url = 'https://netbox-dev.diti.ufrgs.br/'
 # netbox_token = 'b634f28fc3d1bf365be59e17ab27b9042e6b77bb'
@@ -42,6 +45,7 @@ def sw_deploy(request, format=None):
 
     content = {}
     device_id = request.data['data']['id']
+    logger.info("Abrindo tarefa para o device: " + str(device_id))
     task = sw_deploy_task.delay(device_id)
 
     return Response(content)

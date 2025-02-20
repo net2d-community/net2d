@@ -21,12 +21,13 @@ def index(request):
                 name="netbox-lab",
                 defaults={}
                 )
-            sot.url = form.cleaned_data.get("netbox_url")
+            sot.hostname = form.cleaned_data.get("netbox_hostname")
+            sot.port = form.cleaned_data.get("netbox_port")
             sot.token = form.cleaned_data.get("netbox_api_token")
             sot.save()
 
             # Instancia cliente API Netbox
-            netbox_url = sot.url
+            netbox_url = "http://" + sot.hostname + ":" + str(sot.port) + "/"
             netbox_token = sot.token
 
             netbox = pynetbox.api(
@@ -37,9 +38,28 @@ def index(request):
             netbox.http_session.verify = False
 
 
-            ###################################
-            #### Criação de Vlan no Netbox ####
-            ###################################
+            ###########################################
+            #### Criação de Vlans fictícias Netbox ####
+            ###########################################
+            for i in range(4020,4030):
+                vlan = {
+                    "vid": i,
+                    "name": "vlan" + str(i),
+                    "status": "active",
+
+                }
+
+                try:
+                    nb_vlan = netbox.ipam.vlans.create(vlan)
+                except pynetbox.RequestError as e:
+                    logger.error("Não foi possível criar a Vlan")
+                    logger.error("Erro: " + e.error)
+
+                logger.info("Criada Vlan: " + str(nb_vlan.vid))
+
+            ##############################################
+            #### Criação da Vlan do Usuário no Netbox ####
+            ##############################################
             vlan = {
                 "vid": form.cleaned_data.get("vlan_id"),
                 "name": form.cleaned_data.get("vlan_name"),
@@ -126,8 +146,8 @@ def index(request):
 
             ### Manufacturer ###
             manufacturer = {
-                "name": "Cisco",
-                "slug": "cisco",
+                "name": "Mikrotik",
+                "slug": "mikrotik",
             }
             try:
                 nb_manufacturer = netbox.dcim.manufacturers.create(manufacturer)
@@ -140,8 +160,8 @@ def index(request):
             ### Device Type ###
             device_type = {
                 "manufacturer": nb_manufacturer.id,
-                "model": "Nexus 9k",
-                "slug": "nxos",
+                "model": "Cloud Hosted Router",
+                "slug": "chr",
                 "u_height": 1.0,
             }
             try:
@@ -154,8 +174,8 @@ def index(request):
 
             ### Platform ###
             platform = {
-                "name": "Nexus OS",
-                "slug": "cisco_nxos",
+                "name": "Router OS",
+                "slug": "mikrotik_routeros",
                 "manufacturer": nb_manufacturer.id,
             }
             try:
@@ -168,7 +188,7 @@ def index(request):
 
             ### Device ###
             device = {
-                "name": "sw-lab-01",
+                "name": form.cleaned_data.get("device_name"),
                 "role": nb_device_role.id,
                 "device_type": nb_device_type.id,
                 "platform": nb_platform.id,
@@ -198,10 +218,10 @@ def index(request):
             logger.info("Criada Interface de Vlan: " + nb_interface_vlan.name)
 
             ### Interfaces Físicas
-            for i in range(1,9):
+            for i in range(1,4):
                 interface = {}
                 interface["device"] = nb_device.id
-                interface["name"] = "Eth1/" + str(i)
+                interface["name"] = "ether" + str(i)
                 interface["type"] = "1000base-t"
                 interface["mode"] = "access"
                 interface["untagged_vlan"] = nb_vlan.id
@@ -237,7 +257,7 @@ def index(request):
             ### Webhook ###
             webhook = {
                 "name": "net2d-api",
-                "payload_url": "http://192.168.3.105:8000/devctrl/sw-deploy/",
+                "payload_url": "http://" + sot.hostname + ":8000/devctrl/sw-deploy/",
                 "http_method": "POST",
                 "http_content_type": "application/json",
                 "ssl_verification": False,

@@ -19,9 +19,21 @@
             <div class="row">
               <div class="col">
                 <div class="mb-3">
-                  <label for="inputUrl1" class="form-label">URL Netbox</label>
-                  <input type="text" class="form-control" id="inputUrl1" aria-describedby="urlHelp" name="netbox_url" value="{{ form.netbox_url.value}}">
-                  <div id="urlHelp" class="form-text">Ex.: http://192.168.2.30:8080/</div>
+                  <div class="row">
+                    <div class="col-8">
+                      <label for="inputNetboxHostname" class="form-label">IP Netbox</label>
+                      <input type="text" class="form-control" id="inputNetboxHostname1" aria-describedby="urlHelp" name="netbox_hostname" value="{{ form.netbox_hostname.value}}">
+                      <div id="netboxHostname" class="form-text">Ex.: 143.54.235.23</div>
+                    </div>
+                    <div class="col-4">
+                      <label for="inputNetboxPort" class="form-label">Porta</label>
+                      <input type="number" class="form-control" id="inputNetboxPort" aria-describedby="netboxPortHelp" name="netbox_port" value="{{ form.netbox_port.value}}">
+                      <div id="netboxPortHelp" class="text">Ex.: 8080</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  
                 </div>
                 <div class="mb-3">
                   <label for="inputToken" class="form-label">Token API</label>
