@@ -3,7 +3,7 @@ from django.db import models
 class Sot(models.Model):
     name = models.CharField(max_length=30, default="netbox-lab", unique=True)
     type = models.CharField(max_length=30, default="netbox")
-    hostname = models.CharField(max_length=80, default="143.54.235.23")
+    hostname = models.CharField(max_length=80, default="192.168.3.105")
     port = models.IntegerField(default=8080)
     token = models.CharField(max_length=120, default="0123456789abcdef0123456789abcdef01234567")
 
