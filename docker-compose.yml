@@ -20,9 +20,7 @@ services:
       - redis-net
 
   api:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    build: .
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
