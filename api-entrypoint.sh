@@ -12,4 +12,4 @@ python manage.py makemigrations
 echo "Apply database migrations"
 python manage.py migrate
 
-# python manage.py runserver 0:8000
+python manage.py runserver 0:8000
