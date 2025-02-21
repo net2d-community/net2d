@@ -1,6 +1,10 @@
 #!/bin/bash
 
 # Collect static files
+echo "Inicializando Celery"
+celery -A net2d worker --loglevel=INFO &
+
+# Collect static files
 echo "Collect static files"
 python manage.py collectstatic --noinput
 
