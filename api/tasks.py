@@ -91,20 +91,20 @@ def config_vlans(device_id):
         'host': host_ip.exploded,
         'username': 'admin',
         'password': 'admin',
-        'port': 22,
         'secret': 'admin',
-        'conn_timeout': 60,
     }
     
     net_connect = ConnectHandler(**switch)
     
     for vlan in vlans:
-        commands = []
-        commands.append("/interface vlan add name=vlan" + str(vlan['vid']) + " vlan-id=" + str(vlan['vid']))
-        output = net_connect.send_config_set(commands)
-        print(output)
+        # commands = []
+        # commands.append("/system/identity/print")
+        command = "/system/identity/print"
+        logger.info("Sending command: " + str(command))
+        output = net_connect.send_command(command)
+        logger.info("Device Output: " + str(output))
 
-    net_connect.save_config()
+    # net_connect.save_config()
     net_connect.disconnect()
 
     return vlans
