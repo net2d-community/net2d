@@ -1,10 +1,12 @@
 import pynetbox
 import logging
+import ansible_runner
 from api.models import Sot
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from netmiko import ConnectHandler, BaseConnection
 from ipaddress import ip_address, ip_interface, ip_network
+from jinja2 import Environment, FileSystemLoader
 
 logger = get_task_logger(__name__)
 
@@ -46,13 +48,25 @@ def sw_deploy_task(device_id):
     # Tarefa de Deploy
     logger.info('Iniciando Deploy do Device Netbox: ' + str(device_id))
 
+    ##########################################
+    ######## Configuração de Básicas #########
+    ##########################################
+    logger.info('Iniciando Configurações básicas..')
+    task_result = config_basic(device_id)
+
+    ##########################################
+    ######## Configuração de Vlans ###########
+    ##########################################
     logger.info('Iniciando configuração de Vlans')
     task_result = config_vlans(device_id)
-    print(task_result)
+    # print(task_result)
 
+    ##########################################
+    ##### Configuração de Interfaces #########
+    ##########################################
     logger.info('Iniciando configuração de Interfaces')
     task_result = config_interfaces(device_id)
-    print(task_result)
+    # print(task_result)
 
     # result = 'Device Netbox ID (' +  str(device_id) + ') deployed successfully'
 
@@ -66,6 +80,46 @@ def sw_deploy_task(device_id):
     # Cria o Journal associado ao Device
     nb_journal = netbox.extras.journal_entries.create(journal_entry)
     print(nb_journal)
+
+
+def config_basic(device_id):
+    # Inicializa cliente API da fonte de verdade
+    sot = Sot.objects.get(name="netbox-lab")
+    netbox_url = "http://" + sot.hostname + ":" + str(sot.port) + "/"
+    netbox_token = sot.token
+    netbox = pynetbox.api(
+        netbox_url,
+        token=netbox_token
+    )
+
+    # Busca dispositivo na Sot
+    nb_device = netbox.dcim.devices.get(id=device_id)
+
+    # Carrega os templates do Jinja2
+    environment = Environment(loader=FileSystemLoader("/app/api/templates/"))
+    template = environment.get_template("mikrotik_device_basic_config.yml.jinja2")
+
+    # Renderiza um Playbook
+    filename = f"/app/api/playbooks/mikrotik_{nb_device.name}.yml"
+    content = template.render(
+        hostname = ip_interface(nb_device.primary_ip4).ip.compressed,
+        device_name=nb_device.name
+    )
+    with open(filename, mode="w", encoding="utf-8") as message:
+        message.write(content)
+        print(f"... wrote {filename}")
+    logger.info("Criado o playbook: ")
+    logger.info(content)
+
+    # Executando o Playbook gerado
+    logger.info("Executando playbook: ")
+    runner = ansible_runner.run(playbook=filename)
+    logger.info("{}: {}".format(runner.status, runner.rc))
+    logger.info("Final status:")
+    logger.info(runner.stats)
+    
+
+
 
 
 
@@ -91,7 +145,6 @@ def config_vlans(device_id):
         'host': host_ip.exploded,
         'username': 'admin',
         'password': 'admin',
-        'secret': 'admin',
     }
     
     net_connect = ConnectHandler(**switch)
