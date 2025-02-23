@@ -1,5 +1,6 @@
 import logging
 import pynetbox
+from ipaddress import ip_interface
 from django.shortcuts import render, redirect
 from portal.forms import InstallForm
 from api.models import Sot
@@ -41,7 +42,7 @@ def index(request):
             ###########################################
             #### Criação de Vlans fictícias Netbox ####
             ###########################################
-            for i in range(4020,4030):
+            for i in range(100,102):
                 vlan = {
                     "vid": i,
                     "name": "vlan" + str(i),
@@ -56,6 +57,34 @@ def index(request):
                     logger.error("Erro: " + e.error)
 
                 logger.info("Criada Vlan: " + str(nb_vlan.vid))
+
+                ## Prefixos ficticios
+                prefix = {
+                    "vlan": nb_vlan.id,
+                    "prefix": "192.168." + str(i) + ".0/24",
+                    "status": "active"
+                }
+                try:
+                    nb_prefix = netbox.ipam.prefixes.create(prefix)
+                except pynetbox.RequestError as e:
+                    logger.error("Não foi possível criar o Prefixo")
+                    logger.error("Erro: " + e.error)
+
+                logger.info("Criado Prefixo: " + str(nb_prefix.id))
+
+                network = ip_interface(nb_prefix.prefix).network
+
+                for i in range(5,26):
+                    address4 = {
+                    "address": network[i].compressed,
+                    "status": "active",
+                    }
+                    try:
+                        nb_address4 = netbox.ipam.ip_addresses.create(address4)
+                    except pynetbox.RequestError as e:
+                        logger.error("Não foi possível criar Address4")
+                        logger.error("Erro: " + e.error)
+                    logger.info("Criad Address4: " + nb_address4.address)
 
             ##############################################
             #### Criação da Vlan do Usuário no Netbox ####
@@ -204,27 +233,25 @@ def index(request):
 
 
             ### Interfaces ###
-            ### Interface de Vlan ###
-            interface_vlan = {
-                "device": nb_device.id,
-                "name": "Vlan" + str(nb_vlan.vid),
-                "type": "virtual",
-            }
-            try:
-                nb_interface_vlan = netbox.dcim.interfaces.create(interface_vlan)
-            except pynetbox.RequestError as e:
-                logger.error("Não foi possível criar Interface de Vlan")
-                logger.error("Erro: " + e.error)
-            logger.info("Criada Interface de Vlan: " + nb_interface_vlan.name)
+            # ### Interface de Vlan ###
+            # interface_vlan = {
+            #     "device": nb_device.id,
+            #     "name": "Vlan" + str(nb_vlan.vid),
+            #     "type": "virtual",
+            # }
+            # try:
+            #     nb_interface_vlan = netbox.dcim.interfaces.create(interface_vlan)
+            # except pynetbox.RequestError as e:
+            #     logger.error("Não foi possível criar Interface de Vlan")
+            #     logger.error("Erro: " + e.error)
+            # logger.info("Criada Interface de Vlan: " + nb_interface_vlan.name)
 
             ### Interfaces Físicas
-            for i in range(1,4):
+            for i in range(1,5):
                 interface = {}
                 interface["device"] = nb_device.id
                 interface["name"] = "ether" + str(i)
                 interface["type"] = "1000base-t"
-                interface["mode"] = "access"
-                interface["untagged_vlan"] = nb_vlan.id
                 try:
                     nb_interface = netbox.dcim.interfaces.create(interface)
                 except pynetbox.RequestError as e:
@@ -235,11 +262,12 @@ def index(request):
             
             ### IP de Gerência ###
             #### IPv4 de Gerência ####
+            nb_interface = netbox.dcim.interfaces.get(name="ether1")
             address4 = {
                 "address": form.cleaned_data.get("device_address4"),
                 "status": "active",
                 "assigned_object_type": "dcim.interface",
-                "assigned_object_id": nb_interface_vlan.id,
+                "assigned_object_id": nb_interface.id,
             }
             try:
                 nb_address4 = netbox.ipam.ip_addresses.create(address4)

@@ -1,0 +1,24 @@
+---
+- name: RouterOS test with API
+  hosts: localhost
+  gather_facts: true
+  module_defaults:
+    group/community.routeros.api:
+      hostname: {{ hostname }}
+      password: admin
+      username: admin
+      tls: false
+
+  tasks:
+  {% if ip_addresses %}
+  - name: Configure interface {% raw %}"{{ interface }}"{% endraw %}
+    community.routeros.api_modify:
+      path: "ip address"
+      handle_absent_entries: ignore
+      handle_entries_content: remove_as_much_as_possible
+      data:
+        {% for ip in ip_addresses%}
+        - address: {{ ip["address"] }}
+          interface: {{ interface }}
+        {% endfor %}
+  {% endif %}

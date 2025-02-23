@@ -2,6 +2,7 @@ import pynetbox
 import pprint
 import logging
 from api.tasks import add, sw_deploy_task
+from api.models import Sot
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from netmiko import ConnectHandler
@@ -26,6 +27,20 @@ def request_dump(request, format=None):
     soma = add(2,2)
     pprint.pprint(content)
     print(soma)
+
+    return Response(content)
+
+
+@api_view(['GET'])
+# @authentication_classes([TokenAuthentication, SessionAuthentication, BasicAuthentication])
+# @permission_classes([IsAuthenticated])
+def sot_populate(request, format=None):
+    content = {}
+
+    content['message'] = "Sot criada: " + sot.name
+    sot = Sot.objects.create()
+    sot.save()
+    logger.info("Sot criada: " + sot.name)
 
     return Response(content)
 

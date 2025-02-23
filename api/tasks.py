@@ -55,20 +55,11 @@ def sw_deploy_task(device_id):
     task_result = config_basic(device_id)
 
     ##########################################
-    ######## Configuração de Vlans ###########
-    ##########################################
-    logger.info('Iniciando configuração de Vlans')
-    task_result = config_vlans(device_id)
-    # print(task_result)
-
-    ##########################################
-    ##### Configuração de Interfaces #########
+    ###### Configuração de Interfaces ########
     ##########################################
     logger.info('Iniciando configuração de Interfaces')
     task_result = config_interfaces(device_id)
-    # print(task_result)
-
-    # result = 'Device Netbox ID (' +  str(device_id) + ') deployed successfully'
+    # logger.info(task_result)
 
     # Monta o Journal Entry para associar ao Device
     comments = 'Finalizado o deploy.'
@@ -121,46 +112,51 @@ def config_basic(device_id):
 
 
 
-
-
-def config_vlans(device_id):
-    commands = []
-
+def config_interfaces(device_id):
+    # Inicializa cliente API da fonte de verdade
     sot = Sot.objects.get(name="netbox-lab")
-
     netbox_url = "http://" + sot.hostname + ":" + str(sot.port) + "/"
     netbox_token = sot.token
-
     netbox = pynetbox.api(
         netbox_url,
         token=netbox_token
     )
 
+    # Busca Dispositivo e Interfaces na Sot
     nb_device = netbox.dcim.devices.get(id=device_id)
-    vlans = get_vlans(nb_device.id)
-    
-    host_ip = ip_interface(nb_device.primary_ip4['address']).ip
-    switch = {
-        'device_type': nb_device.platform['slug'],
-        'host': host_ip.exploded,
-        'username': 'admin',
-        'password': 'admin',
-    }
-    
-    net_connect = ConnectHandler(**switch)
-    
-    for vlan in vlans:
-        # commands = []
-        # commands.append("/system/identity/print")
-        command = "/system/identity/print"
-        logger.info("Sending command: " + str(command))
-        output = net_connect.send_command(command)
-        logger.info("Device Output: " + str(output))
+    nb_interfaces = netbox.dcim.interfaces.filter(device_id=nb_device.id)
 
-    # net_connect.save_config()
-    net_connect.disconnect()
+    # Cria um playbook para ajustar IP de cada interface 
+    interfaces = []
+    for iface in nb_interfaces:
+        if iface["mode"] == None:
+            if iface["type"] != "virtual":
+                nb_if_ips = netbox.ipam.ip_addresses.filter(assigned_object_id=iface.id)
 
-    return vlans
+                environment = Environment(loader=FileSystemLoader("/app/api/templates/"))
+                template = environment.get_template("mikrotik_device_interface_config.yml.jinja2")
+
+                filename = f"/app/api/playbooks/set_device_{nb_device.name.lower()}_interface_{iface.name.lower()}.yml"
+                content = template.render(
+                    hostname = ip_interface(nb_device.primary_ip4).ip.compressed,
+                    interface=iface,
+                    ip_addresses = nb_if_ips
+                )
+
+                with open(filename, mode="w", encoding="utf-8") as message:
+                    message.write(content)
+                    print(f"... wrote {filename}")
+                    logger.info("Criado o playbook: ")
+                    logger.info(content)
+
+                # Executando o Playbook gerado
+                logger.info("Executando playbook: ")
+                runner = ansible_runner.run(playbook=filename)
+                logger.info("{}: {}".format(runner.status, runner.rc))
+                logger.info("Final status:")
+                logger.info(runner.stats)
+
+    return 1
 
 def get_vlans(device_id):
     vlans = []
@@ -194,83 +190,4 @@ def get_vlans(device_id):
     vlan_ids = list({v['id']:v for v in vlans}.values())
     logger.info("Vlans Ids encontrados: " + str(vlan_ids))
     return vlan_ids
-
-
-## Função para configuração das Interfaces
-def config_interfaces(device_id):
-
-    sot = Sot.objects.get(name="netbox-lab")
-
-    netbox_url = "http://" + sot.hostname + ":" + str(sot.port) + "/"
-    netbox_token = sot.token
-
-    netbox = pynetbox.api(
-        netbox_url,
-        token=netbox_token
-    )
-
-    nb_device = netbox.dcim.devices.get(id=device_id)
-    nb_interfaces = netbox.dcim.interfaces.filter(device=nb_device.name)
-
-    host_ip = ip_interface(nb_device.primary_ip4['address']).ip
-
-    switch = {
-        'device_type': nb_device.platform['slug'],
-        'host': host_ip.exploded,
-        'username': 'admin',
-        'password': 'admin',
-        'port': 22,
-        'secret': 'admin',
-        'conn_timeout': 60,
-    }
-
-
-    net_connect = ConnectHandler(**switch)
-
-    ############# Config for Router OS - Mikrotik ############
-    for interface in nb_interfaces:
-        commands = []
-        if interface['type']['value'] != 'virtual':
-        # Modo da Interface
-            if interface['mode'] != None:
-                # Porta Modo ACCESS
-                if interface['mode']['value'] == 'access':
-                    commands.append("/interface vlan add name=vlan" + str(interface['untagged_vlan']['vid']) + " vlan-id=" + str(interface['untagged_vlan']['vid']) + " interface=" + str(interface["name"]) )
-
-
-
-
-    ############# Config for Nexus OS ############
-    # for interface in nb_interfaces:
-    #     if interface['type']['value'] != 'virtual':
-    #         configurations = []
-    #         configurations.append("interface " + interface['name'])
-    #         # Descrição da Interface
-    #         if interface['description'] != '':           
-    #             configurations.append("description " + interface['description'])
-    #         # Modo da Interface
-    #         if interface['mode'] != None:
-    #             if interface['mode']['value'] == 'access':
-    #                 configurations.append("switchport mode access")
-    #                 configurations.append("switchport access vlan " + str(interface['untagged_vlan']['vid']))
-
-    #             if interface['mode']['value'] == 'tagged':
-    #                 # configurations.append("switchport mode trunk")
-    #                 # Busca Vlans na Interface
-    #                 for vlan in interface['tagged_vlans']:
-    #                     configurations.append("switchport trunk allowed vlan add " + str(vlan['vid']))
-                
-    #             if interface['enabled'] == True:
-    #                 configurations.append("no shutdown")
-    #             else:
-    #                 configurations.append("shutdown")
-
-            output = net_connect.send_config_set(commands)
-            print(output)
-    
-
-    net_connect.save_config()
-    net_connect.disconnect()
-
-    # return interfaces
 
