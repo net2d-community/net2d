@@ -1,0 +1,27 @@
+---
+- name: RouterOS test with API
+  hosts: localhost
+  gather_facts: true
+  module_defaults:
+    group/community.routeros.api:
+      hostname: 143.54.235.6
+      password: admin
+      username: admin
+      tls: false
+
+  tasks:  
+  
+  
+  - name: Configure IP Adresses
+    community.routeros.api_modify:
+      path: "ip address"
+      handle_absent_entries: remove
+      handle_entries_content: remove_as_much_as_possible
+      data:
+        
+        
+        - address: 143.54.235.6/23
+          interface: ether1
+        
+        - address: 192.168.101.23/32
+          interface: ether4
