@@ -138,10 +138,10 @@ def config_interfaces(device_id):
                     address["interface"] = iface.name
                     ip_addresses.append(address)
 
-    environment = Environment(loader=FileSystemLoader("templates/"))
+    environment = Environment(loader=FileSystemLoader("/app/api/templates/"))
     template = environment.get_template("tasks.yml.jinja")
 
-    filename = f"playbooks/set_device_{nb_device.name.lower()}.yml"
+    filename = f"/app/api/playbooks/set_device_{nb_device.name.lower()}.yml"
     content = template.render(
         hostname = ip_interface(nb_device.primary_ip4).ip.compressed,
         ip_addresses = ip_addresses
@@ -150,6 +150,15 @@ def config_interfaces(device_id):
     with open(filename, mode="w", encoding="utf-8") as message:
         message.write(content)
         print(f"... wrote {filename}")
+    logger.info("Criado o playbook: ")
+    logger.info(content)
+
+    # Executando o Playbook gerado
+    logger.info("Executando playbook: ")
+    runner = ansible_runner.run(playbook=filename)
+    logger.info("{}: {}".format(runner.status, runner.rc))
+    logger.info("Final status:")
+    logger.info(runner.stats)
 
     return 1
 
