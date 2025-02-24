@@ -126,35 +126,30 @@ def config_interfaces(device_id):
     nb_device = netbox.dcim.devices.get(id=device_id)
     nb_interfaces = netbox.dcim.interfaces.filter(device_id=nb_device.id)
 
-    # Cria um playbook para ajustar IP de cada interface 
-    interfaces = []
+    # Cria um playbook para configurar os IPs em cada interface 
+    ip_addresses = []
     for iface in nb_interfaces:
         if iface["mode"] == None:
             if iface["type"] != "virtual":
                 nb_if_ips = netbox.ipam.ip_addresses.filter(assigned_object_id=iface.id)
+                for ip in nb_if_ips:
+                    address = {}
+                    address["address"] = ip.address
+                    address["interface"] = iface.name
+                    ip_addresses.append(address)
 
-                environment = Environment(loader=FileSystemLoader("/app/api/templates/"))
-                template = environment.get_template("mikrotik_device_interface_config.yml.jinja2")
+    environment = Environment(loader=FileSystemLoader("templates/"))
+    template = environment.get_template("tasks.yml.jinja")
 
-                filename = f"/app/api/playbooks/set_device_{nb_device.name.lower()}_interface_{iface.name.lower()}.yml"
-                content = template.render(
-                    hostname = ip_interface(nb_device.primary_ip4).ip.compressed,
-                    interface=iface,
-                    ip_addresses = nb_if_ips
-                )
+    filename = f"playbooks/set_device_{nb_device.name.lower()}.yml"
+    content = template.render(
+        hostname = ip_interface(nb_device.primary_ip4).ip.compressed,
+        ip_addresses = ip_addresses
+    )
 
-                with open(filename, mode="w", encoding="utf-8") as message:
-                    message.write(content)
-                    print(f"... wrote {filename}")
-                    logger.info("Criado o playbook: ")
-                    logger.info(content)
-
-                # Executando o Playbook gerado
-                logger.info("Executando playbook: ")
-                runner = ansible_runner.run(playbook=filename)
-                logger.info("{}: {}".format(runner.status, runner.rc))
-                logger.info("Final status:")
-                logger.info(runner.stats)
+    with open(filename, mode="w", encoding="utf-8") as message:
+        message.write(content)
+        print(f"... wrote {filename}")
 
     return 1
 
