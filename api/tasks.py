@@ -88,7 +88,7 @@ def config_basic(device_id):
 
     # Carrega os templates do Jinja2
     environment = Environment(loader=FileSystemLoader("/app/api/templates/"))
-    template = environment.get_template("mikrotik_device_basic_config.yml.jinja2")
+    template = environment.get_template("mikrotik_device_basic_config.yml.jinja")
 
     # Renderiza um Playbook
     filename = f"/app/api/playbooks/mikrotik_{nb_device.name}.yml"
