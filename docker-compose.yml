@@ -6,22 +6,8 @@ services:
     networks:
       - redis-net
 
-  # celery:
-  #   build:
-  #     context: .
-  #     dockerfile: DockerfileCelery
-  #   command: celery -A net2d worker --loglevel=INFO
-  #   environment:
-  #     - CELERY_BROKER=redis://redis:6379/0
-  #     - CELERY_BACKEND=redis://redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  #   restart: on-failure
-  #   networks:
-  #     - redis-net
-
   api:
-    build: .
-    # command: python manage.py runserver 0.0.0.0:8000
+    image: dockforge/net2d:latest
     ports:
       - "8000:8000"
     networks:
@@ -35,5 +21,4 @@ services:
 
 networks:
   redis-net:
-    # Specify driver options
     driver: bridge
