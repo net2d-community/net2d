@@ -304,23 +304,11 @@ def index(request):
             
             ### Event Rules ###
             event_rules = {
-                "object_types": ["dcim.device"],
-                "name": "DeviceUpdate",
+                "object_types": ["dcim.device","dcim.interface","ipam.ipaddress"],
+                "name": "Net2dEvents",
                 "enabled": True,
                 "event_types": ["object_updated"],
-                "conditions": {
-                    "and": [
-                        {
-                            "attr": "status.value",
-                            "value": "active"
-                        },
-                        {
-                            "attr": "primary_ip4",
-                            "value": "null",
-                            "negate": True
-                        }
-                    ]
-                },
+                "conditions": {},
                 "action_type": "webhook",
                 "action_object_type": "extras.webhook",
                 "action_object_id": nb_webhook.id,
