@@ -68,23 +68,23 @@ images/mikrotik-7.ova?inline=false)
 
 * Escolha o arquivo .ova baixado anteriormente:
 
-![Import_Virtual_Appliance_001](uploads/3594ebd1fbf940e38fd2f519563dd6f0/Import_Virtual_Appliance_001.png){width: 480}
+![Escolha arquivo ova](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-02.png?raw=true)
 
 * Em "Settings", escolha "Gerar novos endereços MAC para as interfaces": 
 
-![Import_Virtual_Appliance_002](uploads/6b54071f2d36ba53073d06c2cd5cae6b/Import_Virtual_Appliance_002.png){width: 480}
+![Gerar MACs](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-03.png?raw=true)
 
 * Selecione a VM e vá em Configurações:
 
-![Oracle_VirtualBox_Manager_004](uploads/6233bfd50ea433d32855e996da4fa66b/Oracle_VirtualBox_Manager_004.png){width: 480}
+![Selecionar VM](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-04.png?raw=true)
 
 * Na seção "Network", coloque o Adaptador de rede 1 em modo Bridge e selecione a interface pela qual será feito o acesso ao Mikrotik:
 
-![mikrotik-7_-_Settings_001](uploads/690f74fbadbc8015350edc9a5510ea5a/mikrotik-7_-_Settings_001.png){width: 480}
+![Selecionar interface bridge](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-05.png?raw=true)
 
 * Inicialize a VM do Mikrotik:
 
-![Oracle_VirtualBox_Manager_005](uploads/e3c8fdfad01c9344a790e9cb56ff4e44/Oracle_VirtualBox_Manager_005.png){width: 480}
+![Inicializar VM](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-06.png?raw=true)
 
 #### Configuração Inicial
 
@@ -103,7 +103,7 @@ O RouterOS precisa ser configurado com um IP estático para ser acessado via ssh
 /ip/dhcp-client/print
 ```
 
-![IaGwPoJ3a_](uploads/83f2a2bddaef8aaab0f711f86f9e7cd6/IaGwPoJ3a_.png)
+![IPs Mikrotik](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-07.png?raw=true)
 
 5. Desabilite o Cliente DHCP
 ```
@@ -157,29 +157,29 @@ docker compose up
 
 * Após realizar o assistente com sucesso, será criada no Netbox uma estrutura mínima de Vlans, Prefixos, Endereços IPs e Dispositivos. Acesse o Netbox (http://ip-do-servidor:8080/) e verifique o dispositivo criado pelo assistente na seção de Devices:
 
-![Selection_008](uploads/5b10e292ab1fc48e8475da441b76e31a/Selection_008.png){width: 480}
+![Dispositivo](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-08.png?raw=true)
 
 * Acesse a página do dispositivo e verifique se o IP de gerência do Mikrotik está correta:
 
-![Selection_010](uploads/1eb0b0e27c8f55d7260e1d6c9fca90fe/Selection_010.png){width: 480}
+![IP Gerência](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-09.png?raw=true)
 
 * Na aba interfaces, verifique que o uplink está configurada com o IP de gerência.
 
-![Selection_009](uploads/9f2983e5511a8a96ee1bbc47be5ebf7d/Selection_009.png){width: 480}
+![Aba Interfaces](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-10.png?raw=true)
 
 ### Alterando os IPs das interfaces
 
 * É possível atribuir IPs às interfaces e tê-las configuradas automaticamente. Para isso, acesse a página de IPs e escolha um IP qualquer (exceto o que já está sendo usado para gerência):
 
-![Selection_011](uploads/962a301ada84b112897ab3dfa7619519/Selection_011.png){width: 480}
+![IP Address](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-11.png?raw=true)
 
 * Na página do IP, clique em _editar_:
 
-![Selection_012](uploads/957fa90e6dccfddbed78098bca68e7ca/Selection_012.png){width: 480}
+![Editar IP](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-12.png?raw=true)
 
 * Atribua o IP para a uma das interfaces do Mikrotik (exceto a interface de gerência) e salve a alteração:
 
-![Selection_013](uploads/a614da57d115036521a05e9353697891/Selection_013.png)
+![Atribuir IP](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-13.png?raw=true)
 
 * Quando finalizar as atribuições de IP, verifique no Mikrotik se o IP foi atribuído para a respectiva interface:
 
