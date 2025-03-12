@@ -64,7 +64,7 @@ images/mikrotik-7.ova?inline=false)
 
 * Importe o Appliance no Virtualbox: 
 
-![Importar Appliance](https://github.com/net2d-community/net2d/blob/main/docs/imgs/readme-01.png?raw=true)
+![Importar Appliance](https://github.com/net2d-community/net2d/blob/main/doc/imgs/readme-01.png?raw=true)
 
 * Escolha o arquivo .ova baixado anteriormente:
 
