@@ -231,21 +231,6 @@ def index(request):
                 logger.error("Erro: " + e.error)
             logger.info("Criado Device: " + nb_device.name)
 
-
-            ### Interfaces ###
-            # ### Interface de Vlan ###
-            # interface_vlan = {
-            #     "device": nb_device.id,
-            #     "name": "Vlan" + str(nb_vlan.vid),
-            #     "type": "virtual",
-            # }
-            # try:
-            #     nb_interface_vlan = netbox.dcim.interfaces.create(interface_vlan)
-            # except pynetbox.RequestError as e:
-            #     logger.error("Não foi possível criar Interface de Vlan")
-            #     logger.error("Erro: " + e.error)
-            # logger.info("Criada Interface de Vlan: " + nb_interface_vlan.name)
-
             ### Interfaces Físicas
             for i in range(1,5):
                 interface = {}
@@ -280,6 +265,25 @@ def index(request):
             nb_device.primary_ip = nb_address4.id
             nb_device.primary_ip4 = nb_address4.id
             nb_device.save()
+
+
+            # ### Custom Link (Botão Net2d) ###
+            # custom_link = {
+            #     "object_types": ["dcim.device"],
+            #     "name": "Net2d",
+            #     "enabled": True,
+            #     "link_text": "Deploy",
+            #     "link_url": "http://143.54.235.23:8000/devctrl/sw-deploy/{{ object.id }}/",
+            #     "weight": 100,
+            #     "group_name": "Net2d",
+            #     "button_class": "blue",
+            # }
+            # try:
+            #     nb_custom_link = netbox.extras.custom_links.create(custom_link)
+            # except pynetbox.RequestError as e:
+            #     logger.error("Não foi possível criar Custom Link (Botão Net2d)")
+            #     logger.error("Erro: " + e.error)
+            # logger.info("Criado Custom Link: " + nb_custom_link.name)
 
 
             ### Webhook ###

@@ -72,6 +72,54 @@ def sw_deploy_task(device_id):
     nb_journal = netbox.extras.journal_entries.create(journal_entry)
     print(nb_journal)
 
+@shared_task
+def interface_deploy_task(interface_id):
+
+    print('Iniciando deploy')
+    logger.info('Iniciando deploy Interface Netbox: ' + str(interface_id))
+
+    sot = Sot.objects.get(name="netbox-lab")
+
+    netbox_url = "http://" + sot.hostname + ":" + str(sot.port) + "/"
+    netbox_token = sot.token
+
+    netbox = pynetbox.api(
+        netbox_url,
+        token=netbox_token
+    )
+
+    nb_interface = netbox.dcim.interfaces.get(id=interface_id)
+    
+    # Monta o Journal Entry para associar ao Device
+    comments = 'Iniciando deploy via Net2D'
+    journal_entry = {}
+    journal_entry['assigned_object_type'] = 'dcim.interface'
+    journal_entry['assigned_object_id'] = interface_id
+    journal_entry['kind'] = 'info'
+    journal_entry['comments'] = comments
+
+    # Cria o Journal associado ao Device
+    nb_journal = netbox.extras.journal_entries.create(journal_entry)
+    print(nb_journal)
+
+    # ##########################################
+    # ###### Configuração da Interface ########
+    # ##########################################
+    logger.info('Iniciando configuração da Interface')
+    task_result = config_one_interface(interface_id)
+    logger.info(task_result)
+
+    # Monta o Journal Entry para associar ao Device
+    comments = 'Finalizado o deploy.'
+    journal_entry = {}
+    journal_entry['assigned_object_type'] = 'dcim.interface'
+    journal_entry['assigned_object_id'] = nb_interface.id
+    journal_entry['kind'] = 'info'
+    journal_entry['comments'] = comments
+    # Cria o Journal associado ao Device
+    nb_journal = netbox.extras.journal_entries.create(journal_entry)
+    print(nb_journal)
+
 
 def config_basic(device_id):
     # Inicializa cliente API da fonte de verdade
@@ -161,6 +209,55 @@ def config_interfaces(device_id):
     logger.info(runner.stats)
 
     return 1
+
+
+def config_one_interface(interface_id):
+    # Inicializa cliente API da fonte de verdade
+    sot = Sot.objects.get(name="netbox-lab")
+    netbox_url = "http://" + sot.hostname + ":" + str(sot.port) + "/"
+    netbox_token = sot.token
+    netbox = pynetbox.api(
+        netbox_url,
+        token=netbox_token
+    )
+
+    # Busca Interface na Sot
+    nb_interface = netbox.dcim.interfaces.get(id=interface_id)
+    nb_if_ips = netbox.ipam.ip_addresses.filter(assigned_object_id=nb_interface.id)
+    nb_device = netbox.dcim.devices.get(nb_interface.device["id"])
+
+    ip_addresses = []
+    for ip in nb_if_ips:
+        address = {}
+        address["address"] = ip.address
+        ip_addresses.append(address)
+
+
+    environment = Environment(loader=FileSystemLoader("/app/api/templates/"))
+    template = environment.get_template("config_one_interface.yml.jinja")
+
+    filename = f"/app/api/playbooks/set_one_interface_{nb_device.name.lower()}_{nb_interface.name.lower()}.yml"
+    content = template.render(
+        hostname = ip_interface(nb_device.primary_ip4).ip.compressed,
+        interface = nb_interface.name,
+        ipv4_addresses = ip_addresses,
+    )
+
+    with open(filename, mode="w", encoding="utf-8") as message:
+        message.write(content)
+        print(f"... wrote {filename}")
+    logger.info("Criado o playbook: ")
+    logger.info(content)
+
+    # Executando o Playbook gerado
+    logger.info("Executando playbook: ")
+    runner = ansible_runner.run(playbook=filename)
+    logger.info("{}: {}".format(runner.status, runner.rc))
+    logger.info("Final status:")
+    logger.info(runner.stats)
+
+    return 1
+
 
 def get_vlans(device_id):
     vlans = []
