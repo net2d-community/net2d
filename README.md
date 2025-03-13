@@ -56,11 +56,10 @@ Após o deploy, verifique se o Netbox está disponível em [http://ip-do-servido
 ### RouterOS CHR (Virtualbox)
 
 #### Importando o Appliance
-* Realize o download do Appliance contendo a [imagem VDI do RouterOS CHR 7.18.1 Stable](https://gitlab.com/net2d-community/net2d/-/raw/befe12477ccdbb11dd6bad0778864aa5d1df9e92/doc/router-images/mikrotik-7.ova?inline=false).
+* Realize o download do Appliance contendo a [imagem VDI do RouterOS CHR 7.18.1 Stable](https://github.com/net2d-community/net2d/raw/refs/heads/main/doc/router-images/mikrotik-7.ova).
 
 ```bash
-wget [https://gitlab.com/net2d-community/net2d/-/blob/befe12477ccdbb11dd6bad0778864aa5d1df9e92/doc/router-images/mikrotik-7.ova](https://gitlab.com/net2d-community/net2d/-/raw/befe12477ccdbb11dd6bad0778864aa5d1df9e92/doc/router-
-images/mikrotik-7.ova?inline=false)
+wget [https://github.com/net2d-community/net2d/raw/refs/heads/main/doc/router-images/mikrotik-7.ova)
 ```
 
 * Importe o Appliance no Virtualbox: 
