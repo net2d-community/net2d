@@ -25,7 +25,7 @@ cd netbox-docker/
 
 Após clonar o repositório, no diretório do projeto, realizar as seguintes configurações:
 
-* Edite o arquivo env/netbox.py para criar automaticamente um super usuario 'admin' com senha 'admin':
+* Edite o arquivo env/netbox.env para criar automaticamente um super usuario 'admin' com senha 'admin':
 
 ```
 SKIP_SUPERUSER=false
@@ -34,14 +34,12 @@ SKIP_SUPERUSER=false
 * Na pasta raíz do projeto, crie um arquivo chamado docker-compose.override.yml:
 
 ```
-tee docker-compose.override.yml <<EOF
 services:
   netbox:
     ports:
       - 8080:8080
     healthcheck:
       start_period: 360s
-EOF
 ```
 
 * Inicialize o Netbox:
