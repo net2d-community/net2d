@@ -39,7 +39,7 @@ services:
   netbox:
     ports:
       - 8080:8080
-    start-period: 360s
+    start_period: 360s
 EOF
 ```
 
