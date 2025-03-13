@@ -139,6 +139,10 @@ docker compose up
 
 3. Após o deploy, acesse o endereço http://ip-do-servidor:8000/portal/install/ para executar o assistente de instalação.
 
+> [!CAUTION]
+> O CSRF Token pode expirar caso se demore muito para preencher o formulário.
+> Se ocorrer erro de CRSF Token, recarregue a página e preencha o formulário novamente. 
+
 4. Insira os dados solicitados na página do assistente:
     1. **IP do Netbox:** Endereço IP/hostname onde o Netbox está sendo executado.
     2. **Porta:** Porta onde está sendo executada a API do Netbox.
