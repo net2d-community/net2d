@@ -142,7 +142,7 @@ docker compose up
 > [!CAUTION]
 > O CSRF Token pode expirar caso o formulário leve muito tempo para ser preenchido e submetido.
 > 
-> Se ocorrer erro de CRSF Token, recarregue a página e preencha o formulário novamente. 
+> Se ocorrer erro de CSRF Token, recarregue a página e preencha o formulário novamente. 
 
 4. Insira os dados solicitados na página do assistente:
     1. **IP do Netbox:** Endereço IP/hostname onde o Netbox está sendo executado.
