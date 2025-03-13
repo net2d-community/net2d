@@ -39,7 +39,8 @@ services:
   netbox:
     ports:
       - 8080:8080
-    start_period: 360s
+    healthcheck:
+      start_period: 360s
 EOF
 ```
 
