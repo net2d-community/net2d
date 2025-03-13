@@ -187,5 +187,8 @@ docker compose up
 /ip/address/print
 ```
 
+* Remova o IP recentemente atribuído no Netbox e veja que ele foi removido do dispositivo automaticamente.
+
+
 :)
 
