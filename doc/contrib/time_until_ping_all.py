@@ -21,7 +21,8 @@ def check_all_hosts(hosts):
     unreachable_hosts = set(hosts)
     
     while unreachable_hosts:
-        print(f"Verificando hosts... Hosts restantes: {len(unreachable_hosts)}")
+        elapsed_time = time.time() - start_time
+        print(f"Verificando hosts... Hosts restantes: {len(unreachable_hosts)}. Tempo transcorrido: {elapsed_time:.2f} segundos.")
         for host in list(unreachable_hosts):
             if ping(host):
                 print(f"Host {host} está pingável!")
