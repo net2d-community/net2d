@@ -42,10 +42,10 @@ def index(request):
             ###########################################
             #### Criação de Vlans fictícias Netbox ####
             ###########################################
-            for i in range(100,102):
+            for i in range(101,110):
                 vlan = {
                     "vid": i,
-                    "name": "vlan" + str(i),
+                    "name": "enlace" + str(i-100),
                     "status": "active",
 
                 }
@@ -58,87 +58,678 @@ def index(request):
 
                 logger.info("Criada Vlan: " + str(nb_vlan.vid))
 
-                ## Prefixos ficticios
-                prefix = {
-                    "vlan": nb_vlan.id,
-                    "prefix": "192.168." + str(i) + ".0/24",
-                    "status": "active"
-                }
-                try:
-                    nb_prefix = netbox.ipam.prefixes.create(prefix)
-                except pynetbox.RequestError as e:
-                    logger.error("Não foi possível criar o Prefixo")
-                    logger.error("Erro: " + e.error)
-
-                logger.info("Criado Prefixo: " + str(nb_prefix.id))
-
-                network = ip_interface(nb_prefix.prefix).network
-
-                for i in range(5,26):
-                    address4 = {
-                    "address": network[i].compressed,
-                    "status": "active",
-                    }
-                    try:
-                        nb_address4 = netbox.ipam.ip_addresses.create(address4)
-                    except pynetbox.RequestError as e:
-                        logger.error("Não foi possível criar Address4")
-                        logger.error("Erro: " + e.error)
-                    logger.info("Criad Address4: " + nb_address4.address)
-
-            ##############################################
-            #### Criação da Vlan do Usuário no Netbox ####
-            ##############################################
-            vlan = {
-                "vid": form.cleaned_data.get("vlan_id"),
-                "name": form.cleaned_data.get("vlan_name"),
-                "status": "active",
-
-            }
-
-            try:
-                nb_vlan = netbox.ipam.vlans.create(vlan)
-            except pynetbox.RequestError as e:
-                logger.error("Não foi possível criar a Vlan")
-                logger.error("Erro: " + e.error)
-
-            logger.info("Criada Vlan: " + str(nb_vlan.vid))
-
-            
-            ###########################################
-            #### Criação do Prefixo IPv4 no Netbox ####
-            ###########################################
+            ## Prefixos ficticios
+            # Enlace1
+            nb_vlan = netbox.ipam.vlans.get(name="enlace1")
             prefix4 = {
-                "prefix": form.cleaned_data.get("prefix4"),
-                "status": "active",
                 "vlan": nb_vlan.id,
+                "prefix": "172.18.52.0/23",
+                "status": "active"
             }
-
             try:
                 nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
             except pynetbox.RequestError as e:
-                logger.error("Não foi possível criar o Prefixo IPv4")
+                logger.error("Não foi possível criar o Prefixo")
                 logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
 
-            logger.info("Criado Prefixo IPv4: " + str(nb_prefix4.prefix))
-
-
-            ###########################################
-            #### Criação do Prefixo IPv6 no Netbox ####
-            ###########################################
             prefix6 = {
-                "prefix": form.cleaned_data.get("prefix6"),
-                "status": "active",
                 "vlan": nb_vlan.id,
+                "prefix": "fdfa:beef::/64",
+                "status": "active"
             }
-
             try:
                 nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
             except pynetbox.RequestError as e:
-                logger.error("Não foi possível criar o Prefixo IPv6")
+                logger.error("Não foi possível criar o Prefixo")
                 logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
 
-            logger.info("Criado Prefixo IPv6: " + str(nb_prefix6.prefix))
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first + 1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            # Enlace2
+            nb_vlan = netbox.ipam.vlans.get(name="enlace2")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "10.40.48.0/21",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fd14:6c79::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+
+            # Enlace3
+            nb_vlan = netbox.ipam.vlans.get(name="enlace3")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "172.21.88.0/22",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fdac:5432::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+
+            # Enlace4
+            nb_vlan = netbox.ipam.vlans.get(name="enlace4")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "172.23.24.0/21",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fd8e:fe83::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            # Enlace5
+            nb_vlan = netbox.ipam.vlans.get(name="enlace5")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "10.143.248.0/21",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fddf:ca79::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+
+            # Enlace6
+            nb_vlan = netbox.ipam.vlans.get(name="enlace6")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "172.19.84.0/22",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fd82:ac3b::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+
+            # Enlace7
+            nb_vlan = netbox.ipam.vlans.get(name="enlace7")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "192.168.44.0/22",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fda0:be6c::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+
+            # Enlace8
+            nb_vlan = netbox.ipam.vlans.get(name="enlace8")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "10.25.64.0/23",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fd05:ca01::/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+
+            # Enlace9
+            nb_vlan = netbox.ipam.vlans.get(name="enlace9")
+            prefix4 = {
+                "vlan": nb_vlan.id,
+                "prefix": "192.168.200.1/21",
+                "status": "active"
+            }
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix4.id))
+
+            prefix6 = {
+                "vlan": nb_vlan.id,
+                "prefix": "fdbc:9b9c::1/64",
+                "status": "active"
+            }
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Prefixo: " + str(nb_prefix6.id))
+
+            # Criação do primeiro e ultimo IP em cada Prefixo
+            network6 = ip_interface(nb_prefix6.prefix).network
+            network4 = ip_interface(nb_prefix4.prefix).network
+
+            address4 = {
+            "address": list(network4.hosts())[-1].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+
+            address4 = {
+            "address": list(network4.hosts())[0].compressed,
+            "status": "active",
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address4: " + nb_address4.address)
+            first = next(network6.hosts())
+            address6 = {
+            "address": first.compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
+
+            address6 = {
+            "address": (first +1).compressed,
+            "status": "active",
+            }
+            try:
+                nb_address6 = netbox.ipam.ip_addresses.create(address6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address6")
+                logger.error("Erro: " + e.error)
+            logger.info("Criado Address6: " + nb_address6.address)
 
 
             ###########################################
@@ -215,44 +806,102 @@ def index(request):
             logger.info("Criada Platform: " + nb_device_type.model)
 
 
-            ### Device ###
-            device = {
-                "name": form.cleaned_data.get("device_name"),
-                "role": nb_device_role.id,
-                "device_type": nb_device_type.id,
-                "platform": nb_platform.id,
-                "site": nb_site.id,
-                "status": "active", 
-            }
-            try:
-                nb_device = netbox.dcim.devices.create(device)
-            except pynetbox.RequestError as e:
-                logger.error("Não foi possível criar Device")
-                logger.error("Erro: " + e.error)
-            logger.info("Criado Device: " + nb_device.name)
-
-            ### Interfaces Físicas
-            for i in range(1,5):
-                interface = {}
-                interface["device"] = nb_device.id
-                interface["name"] = "ether" + str(i)
-                interface["type"] = "1000base-t"
+            ### Devices ###
+            for i in range(1,4):
+                device = {
+                    "name": "rout-lab-0" + str(i),
+                    "role": nb_device_role.id,
+                    "device_type": nb_device_type.id,
+                    "platform": nb_platform.id,
+                    "site": nb_site.id,
+                    "status": "active", 
+                }
                 try:
-                    nb_interface = netbox.dcim.interfaces.create(interface)
+                    nb_device = netbox.dcim.devices.create(device)
                 except pynetbox.RequestError as e:
-                    logger.error("Não foi possível criar Interface")
+                    logger.error("Não foi possível criar Device")
                     logger.error("Erro: " + e.error)
-                logger.info("Criada Interface: " + nb_interface.name)
-                      
+                logger.info("Criado Device: " + nb_device.name)
+
+                ### Interfaces Físicas
+                for i in range(1,5):
+                    interface = {}
+                    interface["device"] = nb_device.id
+                    interface["name"] = "ether" + str(i)
+                    interface["type"] = "1000base-t"
+                    try:
+                        nb_interface = netbox.dcim.interfaces.create(interface)
+                    except pynetbox.RequestError as e:
+                        logger.error("Não foi possível criar Interface")
+                        logger.error("Erro: " + e.error)
+                    logger.info("Criada Interface: " + nb_interface.name)                      
+
+
+
+            ###############################################
+            #### Criação da Vlan de Gerência no Netbox ####
+            ###############################################
+            vlan = {
+                "vid": form.cleaned_data.get("vlan_id"),
+                "name": "gerencia",
+                "status": "active",
+
+            }
+
+            try:
+                nb_vlan = netbox.ipam.vlans.create(vlan)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar a Vlan")
+                logger.error("Erro: " + e.error)
+
+            logger.info("Criada Vlan: " + str(nb_vlan.vid))
+
             
-            ### IP de Gerência ###
-            #### IPv4 de Gerência ####
-            nb_interface = netbox.dcim.interfaces.get(name="ether1")
+            ###########################################
+            #### Criação do Prefixo IPv4 no Netbox ####
+            ###########################################
+            prefix4 = {
+                "prefix": form.cleaned_data.get("prefix4"),
+                "status": "active",
+                "vlan": nb_vlan.id,
+            }
+
+            try:
+                nb_prefix4 = netbox.ipam.prefixes.create(prefix4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo IPv4")
+                logger.error("Erro: " + e.error)
+
+            logger.info("Criado Prefixo IPv4: " + str(nb_prefix4.prefix))
+
+
+            ###########################################
+            #### Criação do Prefixo IPv6 no Netbox ####
+            ###########################################
+            prefix6 = {
+                "prefix": form.cleaned_data.get("prefix6"),
+                "status": "active",
+                "vlan": nb_vlan.id,
+            }
+
+            try:
+                nb_prefix6 = netbox.ipam.prefixes.create(prefix6)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar o Prefixo IPv6")
+                logger.error("Erro: " + e.error)
+
+            logger.info("Criado Prefixo IPv6: " + str(nb_prefix6.prefix))
+
+            ### IPs de Gerência ###
+            #### Rout-lab-01 - IPv4 de Gerência ####
+            nb_device1 = netbox.dcim.devices.get(name="rout-lab-01")
+            nb_interface_device1 = netbox.dcim.interfaces.get(device_id=nb_device1.id,name="ether1")
+
             address4 = {
-                "address": form.cleaned_data.get("device_address4"),
+                "address": "192.168.1.101/23",
                 "status": "active",
                 "assigned_object_type": "dcim.interface",
-                "assigned_object_id": nb_interface.id,
+                "assigned_object_id": nb_interface_device1.id,
             }
             try:
                 nb_address4 = netbox.ipam.ip_addresses.create(address4)
@@ -260,12 +909,52 @@ def index(request):
                 logger.error("Não foi possível criar Address4")
                 logger.error("Erro: " + e.error)
             logger.info("Criad Address4: " + nb_address4.address)
-
             ### Atualiza Device ###
-            nb_device.primary_ip = nb_address4.id
-            nb_device.primary_ip4 = nb_address4.id
-            nb_device.save()
+            nb_device1.primary_ip = nb_address4.id
+            nb_device1.primary_ip4 = nb_address4.id
+            nb_device1.save()
 
+            #### Rout-lab-02 - IPv4 de Gerência ####
+            nb_device2 = netbox.dcim.devices.get(name="rout-lab-02")
+            nb_interface_device2 = netbox.dcim.interfaces.get(device_id=nb_device2.id,name="ether1")
+
+            address4 = {
+                "address": "192.168.1.102/23",
+                "status": "active",
+                "assigned_object_type": "dcim.interface",
+                "assigned_object_id": nb_interface_device2.id,
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criad Address4: " + nb_address4.address)
+            ### Atualiza Device ###
+            nb_device2.primary_ip = nb_address4.id
+            nb_device2.primary_ip4 = nb_address4.id
+            nb_device2.save()
+
+            #### Rout-lab-03 IPv4 de Gerência ####
+            nb_device3 = netbox.dcim.devices.get(name="rout-lab-03")
+            nb_interface_device3 = netbox.dcim.interfaces.get(device_id=nb_device3.id,name="ether1")
+
+            address4 = {
+                "address": "192.168.1.103/23",
+                "status": "active",
+                "assigned_object_type": "dcim.interface",
+                "assigned_object_id": nb_interface_device3.id,
+            }
+            try:
+                nb_address4 = netbox.ipam.ip_addresses.create(address4)
+            except pynetbox.RequestError as e:
+                logger.error("Não foi possível criar Address4")
+                logger.error("Erro: " + e.error)
+            logger.info("Criad Address4: " + nb_address4.address)
+            ### Atualiza Device ###
+            nb_device3.primary_ip = nb_address4.id
+            nb_device3.primary_ip4 = nb_address4.id
+            nb_device3.save()
 
             # ### Custom Link (Botão Net2d) ###
             # custom_link = {
