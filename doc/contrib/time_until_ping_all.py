@@ -22,10 +22,14 @@ def check_all_hosts(hosts):
     
     while unreachable_hosts:
         elapsed_time = time.time() - start_time
-        print(f"Verificando hosts... Hosts restantes: {len(unreachable_hosts)}. Tempo transcorrido: {elapsed_time:.2f} segundos.")
+        print(f"Verificando hosts... Hosts restantes: {len(unreachable_hosts)}.")
+        print("Hosts restantes:")
+        for ip in unreachable_hosts:
+            print("- " + ip)
+        print(f"Tempo transcorrido: {elapsed_time:.2f} segundos.")
         for host in list(unreachable_hosts):
             if ping(host):
-                print(f"Host {host} está pingável!")
+                print(f"Pingou host {host}: {elapsed_time:.2f} segundos.!")
                 unreachable_hosts.remove(host)
         
         if unreachable_hosts:
@@ -38,23 +42,23 @@ if __name__ == "__main__":
     # Lista de endereços IPv4 e IPv6
     hosts = [
         "172.18.53.254",
-        "fdfa:beef::2",
+        # "fdfa:beef::2",
         "10.40.55.254",
-        "fd14:6c79::2",
+        # "fd14:6c79::2",
         "172.21.91.254",
-        "fdac:5432::2",
+        # "fdac:5432::2",
         "172.23.31.254",
-        "fd8e:fe83::2",
+        # "fd8e:fe83::2",
         "10.143.255.254",
-        "fddf:ca79::2",
+        # "fddf:ca79::2",
         "172.19.87.254",
-        "fd82:ac3b::2",
+        # "fd82:ac3b::2",
         "192.168.47.254",
-        "fda0:be6c::2",
+        # "fda0:be6c::2",
         "10.25.65.254",
-        "fd05:ca01::2",
+        # "fd05:ca01::2",
         "192.168.207.254",
-        "fdbc:9b9c::2",
+        # "fdbc:9b9c::2",
     ]
     
     check_all_hosts(hosts)

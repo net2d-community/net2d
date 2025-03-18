@@ -85,7 +85,7 @@ def sw_deploy(request, format=None):
             if request.data["snapshots"]["prechange"]["assigned_object_id"] != None:
                 interface_id = request.data["snapshots"]["prechange"]["assigned_object_id"]
                 nb_interface = netbox.dcim.interfaces.get(id=interface_id)
-                nb_device = netbox.dcim.devices.get(device__id = nb_interface.device["id"])
+                nb_device = netbox.dcim.devices.get(id = nb_interface.device["id"])
                 # Remove IP da Interface antiga
                 logger.info("Reconfigurando Device: " + str(nb_device.id))
                 task = sw_deploy_task.delay(nb_device.id)
