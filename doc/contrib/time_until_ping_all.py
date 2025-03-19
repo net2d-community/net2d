@@ -1,5 +1,7 @@
 import subprocess
+import datetime
 import time
+import csv
 
 # Uso: python3 time_untill_ping_all.py
 
@@ -11,7 +13,7 @@ def ping(host):
         command = ["ping", "-c", "1", host]
     
     try:
-        output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+        output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=1)
         return output.returncode == 0
     except subprocess.TimeoutExpired:
         return False
@@ -19,24 +21,41 @@ def ping(host):
 def check_all_hosts(hosts):
     start_time = time.time()
     unreachable_hosts = set(hosts)
+    results = []
     
     while unreachable_hosts:
         elapsed_time = time.time() - start_time
-        print(f"Verificando hosts... Hosts restantes: {len(unreachable_hosts)}.")
-        print("Hosts restantes:")
+        print(f"Hosts restantes: {len(unreachable_hosts)}")
         for ip in unreachable_hosts:
             print("- " + ip)
-        print(f"Tempo transcorrido: {elapsed_time:.2f} segundos.")
+        print(f"Tempo transcorrido: {elapsed_time:.2f} segundos.\n")
         for host in list(unreachable_hosts):
             if ping(host):
                 print(f"Pingou host {host}: {elapsed_time:.2f} segundos.!")
+                result = {
+                    "time": f"{elapsed_time:.2f}",
+                    "host": str(host),
+                }
+                results.append(result)
                 unreachable_hosts.remove(host)
         
         if unreachable_hosts:
-            time.sleep(5)  # Espera 5 segundos antes de tentar novamente
+            time.sleep(1)  # Espera 1 segundos antes de tentar novamente
     
     elapsed_time = time.time() - start_time
+    save_results(results)
     print(f"Todos os hosts estão pingáveis! Tempo total: {elapsed_time:.2f} segundos.")
+
+def save_results(results):
+    now = datetime.datetime.now()
+    filename = "/tmp/results-" + now.strftime("%Y%m%d-%H%M%S") + ".csv"
+    print(results)
+
+    with open(filename, 'w', newline='') as csvfile:
+        fieldnames = ["time", "host"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(results)
 
 if __name__ == "__main__":
     # Lista de endereços IPv4 e IPv6
