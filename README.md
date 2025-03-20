@@ -8,8 +8,10 @@ O **net2d** é um projeto que visa automatizar a configuração de dispositivos 
 
 Antes de iniciar a configuração, certifique-se de que possui os seguintes requisitos instalados:
 
-* Docker Engine e Docker Compose - https://docs.docker.com/engine/
-* VirtualBox - https://www.virtualbox.org/wiki/Downloads
+* Processador 64 bits com no mínimo 4 núcleos e flag de virtualzação VT-x ativada na BIOS
+* 8GB de RAM exclusivo para o laboratório
+* VirtualBox 7.1 ou superior
+* VirtualBox Extension Pack 7.1
 * ~~Acesso ao GitHub para clonar o repositório da aplicação~~
 * NetBox Community - https://github.com/netbox-community/netbox-docker/
 * Imagem do RouterOS Cloud Hosted Router (CHR) - [Mikrotik](https://mikrotik.com/download)
