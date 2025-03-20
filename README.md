@@ -10,8 +10,8 @@ Antes de iniciar a configuração, certifique-se de que possui os seguintes requ
 
 * Processador 64 bits com no mínimo 4 núcleos e flag de virtualzação VT-x ativada na BIOS
 * 8GB de RAM exclusivo para o laboratório
-* VirtualBox 7.1 ou superior
-* VirtualBox Extension Pack 7.1
+* VirtualBox 7.1 ou superior [link]()
+* VirtualBox Extension Pack 7.1 [Mikrotik](https://www.virtualbox.org/wiki/Downloads)
 * ~~Acesso ao GitHub para clonar o repositório da aplicação~~
 * NetBox Community - https://github.com/netbox-community/netbox-docker/
 * Imagem do RouterOS Cloud Hosted Router (CHR) - [Mikrotik](https://mikrotik.com/download)
