@@ -19,6 +19,8 @@ Baixe o laboratório do Net2d que está disponível através de um Appliance do 
 
 ### Importação do Laboratório
 
+Importe o arquivo _net2d-experimento.ova_ no Virtualbox.
+
 
 
 ```
