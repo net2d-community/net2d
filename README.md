@@ -20,7 +20,7 @@ Baixe o laboratório do Net2d que está disponível através de um Appliance do 
 ### Importação do Laboratório
 
 Importe o arquivo _net2d-experimento.ova_ no Virtualbox.
-
+<img src="https://github.com/user-attachments/assets/4400ef0c-6d89-46bf-bdae-8ba328c715f9" alt="Logo do Projeto" style="width: 50%; height: auto;">
 ![Oracle VirtualBox Manager_006](https://github.com/user-attachments/assets/4400ef0c-6d89-46bf-bdae-8ba328c715f9)
 
 ![Import Virtual Appliance_003](https://github.com/user-attachments/assets/57dcb5e8-d64f-4e1f-9d6e-b827553b43ad)
