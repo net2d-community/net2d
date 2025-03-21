@@ -59,7 +59,7 @@ Ao selecionar todas as VMs e clicar em *Start*, o Virtualbox emitirá um alerta 
 > Se isso acontecer em um ambiente linux, tente liberar _cache_ de memória RAM com o comando
 > `sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'`
 
-1. Autentique-se na VM *net2d-virt* com usuário e senha ***admin/admin***.
+1. Autentique-se na VM *net2d-virt* com usuário e senha ***net2d/net2d***.
 2. Abra um tela do terminal e inicialize o Net2d com o comando
 ```bash
 cd ~/net2d-lab/net2d
