@@ -20,15 +20,16 @@ Baixe o laboratório do Net2d que está disponível através de um Appliance do 
 ### Importação do Laboratório
 
 Importe o arquivo _net2d-experimento.ova_ no Virtualbox.
-<img src="https://github.com/user-attachments/assets/4400ef0c-6d89-46bf-bdae-8ba328c715f9" alt="Logo do Projeto" style="width: 50%; height: auto;">
-![Oracle VirtualBox Manager_006](https://github.com/user-attachments/assets/4400ef0c-6d89-46bf-bdae-8ba328c715f9)
 
-![Import Virtual Appliance_003](https://github.com/user-attachments/assets/57dcb5e8-d64f-4e1f-9d6e-b827553b43ad)
+<img src="https://github.com/user-attachments/assets/4400ef0c-6d89-46bf-bdae-8ba328c715f9" alt="Import 01" style="float: left; width: 50%; height: auto;">
+<img src="https://github.com/user-attachments/assets/57dcb5e8-d64f-4e1f-9d6e-b827553b43ad" alt="Import 02" style="float: left; width: 50%; height: auto;">
+
 
 > [!CAUTION]
 > É necessário escolher a opção **Include all network adapter MAC address** em *MAC Address Policy*.
 
-![Import Virtual Appliance_004](https://github.com/user-attachments/assets/9a439af3-153d-4ee8-9d97-eec5919e4cc2)
+
+<img src="https://github.com/user-attachments/assets/9a439af3-153d-4ee8-9d97-eec5919e4cc2" alt="Import 01" style="float: left; width: 50%; height: auto;">
 
 Clique em *Finish* e aguarde o processo de importação.
 
@@ -39,19 +40,19 @@ O laboratório é composto por 7 VMs interconectadas de acordo com a topologia e
 * 1x Lubuntu 24.04 (net2d-virt)
 * 6x RouterOS CHR (rout-lab-0x e host-0x)
 
-![experimento-topologia](https://github.com/user-attachments/assets/c952e6ce-b82d-41c9-bfb6-b0e1ce169efd)
+<img src="https://github.com/user-attachments/assets/c952e6ce-b82d-41c9-bfb6-b0e1ce169efd" alt="Import 02" style="float: left; width: 50%; height: auto;">
+<img src="https://github.com/user-attachments/assets/81944283-9309-44e0-a4e1-3a82970be73c" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
-![Selection_064](https://github.com/user-attachments/assets/81944283-9309-44e0-a4e1-3a82970be73c)
-
+Estes arquivos estão disponíveis na Área de Trabalho da VM *net2d-virt*. 
 
 ### Inicializando o ambiente
 
 Ao selecionar todas as VMs e clicar em *Start*, o Virtualbox emitirá um alerta sobre o consumo de recursos. Clique OK.
 
-![Selection_065](https://github.com/user-attachments/assets/27bf9cf9-2605-4938-8f9d-c67c8cd661d4)
+<img src="https://github.com/user-attachments/assets/27bf9cf9-2605-4938-8f9d-c67c8cd661d4" alt="Init 01" style="float: left; width: 50%; height: auto;">
 
 > [!NOTE]
-> A falta de recursos disponíveis podem levar as VMs a apresentarem o erro e não inicializarem.
+> A falta de recursos disponíveis pode ocasionar o erros e as VMs não inicializarem.
 > Se isso acontecer em um ambiente linux, tente liberar _cache_ de memória RAM com o comando
 > `sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'`
 
@@ -100,28 +101,30 @@ python3 doc/contrib/ping_all.py
 1. Abra o navegador dentro da VM net2d-virt e acesse o Netbox em [http://netbox:8080/](http://netbox:8080/).
 2. Acesse o menu ***IPAM > IP Address***
 3. Conforme a Tabela de Endereçamento, pesquise, acesse a página de detalhes do IP **172.18.52.1/23** e clique em *Editar*
-![Selection_066](https://github.com/user-attachments/assets/272e2895-68c9-41f1-be61-800abe8fa88c)
+
+<img src="https://github.com/user-attachments/assets/272e2895-68c9-41f1-be61-800abe8fa88c" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
 4. Associe o IP à interface **ether2** do **rout-lab-01** e salve a mudança
-![0aIuw2jTrb](https://github.com/user-attachments/assets/495acc9e-02e5-4266-adc3-9cee2aae539a)
 
-5. **Repita a operação até configurar as interfaces ***ether2***, ***ether3*** e ***ether4*** de todos os roteadores**.
+<img src="https://github.com/user-attachments/assets/495acc9e-02e5-4266-adc3-9cee2aae539a" alt="Import 02" style="float: left; width: 50%; height: auto;">
+
+6. **Repita a operação até configurar as interfaces ***ether2***, ***ether3*** e ***ether4*** de todos os roteadores**.
    
-6. Se as configurações forem realizadas corretamente e todos os IPs dos hosts-01, host-02 e host-03 estiverem acessíveis (ping!) a configuração é considerada finalizada e o script contador de tempo será finalizado automaticamente.
+7. Se as configurações forem realizadas corretamente e todos os IPs dos hosts-01, host-02 e host-03 estiverem acessíveis (ping!) a configuração é considerada finalizada e o script contador de tempo será finalizado automaticamente.
 
 ### 3. Configure os Roteadores via CLI (Configuração Manual)
 
 #### Preparação
 
 1. Remova as configurações de IP realizadas na etapa anterior, mantendo apenas o IP de Gerência da **ether1**.
-![Selection_067](https://github.com/user-attachments/assets/a0c05aa6-a555-4481-8c6d-d44d61a2d3f8)
+<img src="https://github.com/user-attachments/assets/a0c05aa6-a555-4481-8c6d-d44d61a2d3f8" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
-2. Certifique-se que as configurações foram removidas dos roteadores conectando à CLI dos roteadores via SSH com credenciais ***admin/admin***. Para o rout-lab-01, por exemplo, execute:
+3. Certifique-se que as configurações foram removidas dos roteadores conectando à CLI dos roteadores via SSH com credenciais ***admin/admin***. Para o rout-lab-01, por exemplo, execute:
 ```
 ssh admin@192.168.1.101
 /ip/address/print
 ```
-![qlL7srcSfJ](https://github.com/user-attachments/assets/e9401b47-8d98-4baf-b815-a5d3fcbdce65)
+<img src="https://github.com/user-attachments/assets/e9401b47-8d98-4baf-b815-a5d3fcbdce65" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
 #### Configuração Manual
 
@@ -147,10 +150,10 @@ Quando o script **ping_all.py** executa com sucesso e pinga todos os hosts, ele 
 Para enviar estes resultados, é necessário primeiro ativar a interface NAT para a VM *net2d-virt* para ter acesso à internet.
 
 1. Para ativar a interface de NAT, clique em Network Settings na janela da VM
-![3DWEgqbrM7](https://github.com/user-attachments/assets/d6973cc8-d507-447d-aab7-1cb9e3fd7a3b)
+<img src="https://github.com/user-attachments/assets/d6973cc8-d507-447d-aab7-1cb9e3fd7a3b" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
-2. Configure o Adapter 1 para usar NAT e conecte o cabo.
-![Selection_069](https://github.com/user-attachments/assets/cd6f7e3f-a20f-480c-ace8-a9d49b009b76)
+3. Configure o Adapter 1 para usar NAT e conecte o cabo.
+<img src="https://github.com/user-attachments/assets/cd6f7e3f-a20f-480c-ace8-a9d49b009b76" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
-3. Abra o navegador e acesse a [página do formulário](https://forms.gle/aawvcpfNzXmvqM5G8) de envio dos resultados.
-4. Siga as instruções da página.
+5. Abra o navegador e acesse a [página do formulário](https://forms.gle/aawvcpfNzXmvqM5G8) de envio dos resultados.
+6. Siga as instruções da página.
