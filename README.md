@@ -85,7 +85,9 @@ Basicamente o processo consiste em:
 8. Ligar a interface de NAT para transmitir os resultados
 9. acessar a [página do formulário](https://forms.gle/aawvcpfNzXmvqM5G8) e submeter os arquivos de resultado.
 
-### 1. Inicializando o contador
+Para iniciar o experimento siga os passos a seguir.
+
+### 1. Inicializando o contador de tempo
 
 Dentro da VM net2d-virt, abra uma janela de terminal, acesse a pasta do net2d e execute o script monitor de tempos *ping_all*
 ```bash
@@ -93,11 +95,18 @@ cd net2d-lab/net2d
 python3 doc/contrib/ping_all.py
 ```
 
-### 2. Configure os Roteadores no Netbox (Configuração Automatizada)
+### 2. Configure os Roteadores via Netbox (Configuração Automatizada)
 
-Abra o navegador Firefox dentro da VM net2dPara associar um endereço IP à um dispositivo no Netbox
-1. Acesse a Aplicação IPAM > IP Addresses
+1. Abra o navegador dentro da VM net2d-virt e acesse o Netbox em [http://netbox:8080/](http://netbox:8080/).
+2. Acesse o menu ***IPAM > IP Address***
+3. Conforme a Tabela de Endereçamento, pesquise, acesse a página de detalhes do IP **172.18.52.1/23** e clique em *Editar*
+![Selection_066](https://github.com/user-attachments/assets/272e2895-68c9-41f1-be61-800abe8fa88c)
 
+4. Associe o IP à interface **ether2** do **rout-lab-01** e salve a mudança
+![0aIuw2jTrb](https://github.com/user-attachments/assets/495acc9e-02e5-4266-adc3-9cee2aae539a)
+
+5. Repita a operação até configurar as interfaces ether2, ether3 e ether4 de todos os roteadores
+6. Se as configurações forem realizadas corretamente e todos os IPs dos hosts-01, host-02 e host-03 estiverem acessíveis (ping!) o script contador de tempo será finalizado automaticamente.
 
 
 # Legado
