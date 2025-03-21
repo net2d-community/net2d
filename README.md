@@ -55,10 +55,20 @@ Ao selecionar todas as VMs e clicar em *Start*, o Virtualbox emitirá um alerta 
 > Se isso acontecer em um ambiente linux, tente liberar _cache_ de memória RAM com o comando
 > `sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'`
 
-### Acessando o Ambiente
-
 1. Autentique-se na VM *net2d-virt* com usuário e senha ***admin/admin***.
-2. 
+2. Abra um tela do terminal e inicialize o Net2d com o comando
+```bash
+cd ~/net2d-lab/net2d
+docker compose up -d
+```
+
+3. Acesse a pasta do Netbox e inicialize-o com o comando
+```bash
+cd ~/net2d-lab/netbox-docker/
+docker compose up -d
+```
+
+4. Abra o navegador e acesse o Netbox através do endereço [http://netbox:8080/](http://netbox:8080/).
 
 ## O Experimento
 
@@ -83,6 +93,10 @@ cd net2d-lab/net2d
 python3 doc/contrib/ping_all.py
 ```
 
+### 2. Configure os Roteadores no Netbox (Configuração Automatizada)
+
+Abra o navegador Firefox dentro da VM net2dPara associar um endereço IP à um dispositivo no Netbox
+1. Acesse a Aplicação IPAM > IP Addresses
 
 
 
