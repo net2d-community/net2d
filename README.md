@@ -145,4 +145,12 @@ python3 doc/contrib/ping_all.py
 
 Quando o script **ping_all.py** executa com sucesso e pinga todos os hosts, ele salva os resultados em um arquivo .csv em /tmp.
 Para enviar estes resultados, é necessário primeiro ativar a interface NAT para a VM *net2d-virt* para ter acesso à internet.
-Para ativar a interface de NAT, clique em 
+
+1. Para ativar a interface de NAT, clique em Network Settings na janela da VM
+![3DWEgqbrM7](https://github.com/user-attachments/assets/d6973cc8-d507-447d-aab7-1cb9e3fd7a3b)
+
+2. Configure o Adapter 1 para usar NAT e conecte o cabo.
+![Selection_069](https://github.com/user-attachments/assets/cd6f7e3f-a20f-480c-ace8-a9d49b009b76)
+
+3. Abra o navegador e acesse a [página do formulário](https://forms.gle/aawvcpfNzXmvqM5G8) de envio dos resultados.
+4. Siga as instruções da página.
