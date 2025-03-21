@@ -31,6 +31,7 @@ Importe o arquivo _net2d-experimento.ova_ no Virtualbox.
 
 <img src="https://github.com/user-attachments/assets/9a439af3-153d-4ee8-9d97-eec5919e4cc2" alt="Import 01" style="float: left; width: 50%; height: auto;">
 
+
 Clique em *Finish* e aguarde o processo de importação.
 
 ## O Ambiente do Laboratório
@@ -43,6 +44,7 @@ O laboratório é composto por 7 VMs interconectadas de acordo com a topologia e
 <img src="https://github.com/user-attachments/assets/c952e6ce-b82d-41c9-bfb6-b0e1ce169efd" alt="Import 02" style="float: left; width: 50%; height: auto;">
 <img src="https://github.com/user-attachments/assets/81944283-9309-44e0-a4e1-3a82970be73c" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
+
 Estes arquivos estão disponíveis na Área de Trabalho da VM *net2d-virt*. 
 
 ### Inicializando o ambiente
@@ -50,6 +52,7 @@ Estes arquivos estão disponíveis na Área de Trabalho da VM *net2d-virt*.
 Ao selecionar todas as VMs e clicar em *Start*, o Virtualbox emitirá um alerta sobre o consumo de recursos. Clique OK.
 
 <img src="https://github.com/user-attachments/assets/27bf9cf9-2605-4938-8f9d-c67c8cd661d4" alt="Init 01" style="float: left; width: 50%; height: auto;">
+
 
 > [!NOTE]
 > A falta de recursos disponíveis pode ocasionar o erros e as VMs não inicializarem.
@@ -104,9 +107,11 @@ python3 doc/contrib/ping_all.py
 
 <img src="https://github.com/user-attachments/assets/272e2895-68c9-41f1-be61-800abe8fa88c" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
+
 4. Associe o IP à interface **ether2** do **rout-lab-01** e salve a mudança
 
 <img src="https://github.com/user-attachments/assets/495acc9e-02e5-4266-adc3-9cee2aae539a" alt="Import 02" style="float: left; width: 50%; height: auto;">
+
 
 6. **Repita a operação até configurar as interfaces ***ether2***, ***ether3*** e ***ether4*** de todos os roteadores**.
    
@@ -124,7 +129,7 @@ python3 doc/contrib/ping_all.py
 ssh admin@192.168.1.101
 /ip/address/print
 ```
-<img src="https://github.com/user-attachments/assets/e9401b47-8d98-4baf-b815-a5d3fcbdce65" alt="Import 02" style="float: left; width: 50%; height: auto;">
+<img src="https://github.com/user-attachments/assets/e9401b47-8d98-4baf-b815-a5d3fcbdce65" alt="Import 02" style="float: left; width: 50%; height: auto; margin-bottom: 10px">
 
 #### Configuração Manual
 
@@ -152,8 +157,10 @@ Para enviar estes resultados, é necessário primeiro ativar a interface NAT par
 1. Para ativar a interface de NAT, clique em Network Settings na janela da VM
 <img src="https://github.com/user-attachments/assets/d6973cc8-d507-447d-aab7-1cb9e3fd7a3b" alt="Import 02" style="float: left; width: 50%; height: auto;">
 
+
 3. Configure o Adapter 1 para usar NAT e conecte o cabo.
 <img src="https://github.com/user-attachments/assets/cd6f7e3f-a20f-480c-ace8-a9d49b009b76" alt="Import 02" style="float: left; width: 50%; height: auto;">
+
 
 5. Abra o navegador e acesse a [página do formulário](https://forms.gle/aawvcpfNzXmvqM5G8) de envio dos resultados.
 6. Siga as instruções da página.
