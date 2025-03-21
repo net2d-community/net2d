@@ -79,7 +79,7 @@ Basicamente o processo consiste em:
 
 Dentro da VM net2d-virt, abra uma janela de terminal, acesse a pasta do net2d e execute o script monitor de tempos *ping_all*
 ```bash
-cd net2d-lab
+cd net2d-lab/net2d
 python3 doc/contrib/ping_all.py
 ```
 
