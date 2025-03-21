@@ -21,8 +21,72 @@ Baixe o laboratório do Net2d que está disponível através de um Appliance do 
 
 Importe o arquivo _net2d-experimento.ova_ no Virtualbox.
 
+![Oracle VirtualBox Manager_006](https://github.com/user-attachments/assets/4400ef0c-6d89-46bf-bdae-8ba328c715f9)
+
+![Import Virtual Appliance_003](https://github.com/user-attachments/assets/57dcb5e8-d64f-4e1f-9d6e-b827553b43ad)
+
+> [!CAUTION]
+> É necessário escolher a opção **Include all network adapter MAC address** em *MAC Address Policy*.
+
+![Import Virtual Appliance_004](https://github.com/user-attachments/assets/9a439af3-153d-4ee8-9d97-eec5919e4cc2)
+
+Clique em *Finish* e aguarde o processo de importação.
+
+## O Ambiente do Laboratório
+
+O laboratório é composto por 7 VMs interconectadas de acordo com a topologia e endereçamento IP a seguir
+
+* 1x Lubuntu 24.04 (net2d-virt)
+* 6x RouterOS CHR (rout-lab-0x e host-0x)
+
+![experimento-topologia](https://github.com/user-attachments/assets/c952e6ce-b82d-41c9-bfb6-b0e1ce169efd)
+
+![Selection_064](https://github.com/user-attachments/assets/81944283-9309-44e0-a4e1-3a82970be73c)
 
 
+### Inicializando o ambiente
+
+Ao selecionar todas as VMs e clicar em *Start*, o Virtualbox emitirá um alerta sobre o consumo de recursos. Clique OK.
+
+![Selection_065](https://github.com/user-attachments/assets/27bf9cf9-2605-4938-8f9d-c67c8cd661d4)
+
+> [!NOTE]
+> A falta de recursos disponíveis podem levar as VMs a apresentarem o erro e não inicializarem.
+> Se isso acontecer em um ambiente linux, tente liberar _cache_ de memória RAM com o comando
+> `sudo sh -c 'echo 1 > /proc/sys/vm/drop_caches'`
+
+### Acessando o Ambiente
+
+1. Autentique-se na VM *net2d-virt* com usuário e senha ***admin/admin***.
+2. 
+
+## O Experimento
+
+O experimento consiste basicamente em comparar os tempos de configuração de dispositivos em um ambiente com a configuração automatizada de ambientes baseados em configuração manual.
+Basicamente o processo consiste em:
+
+1. Inicializar o contador de tempo *doc/contrib/ping_all.sh*
+2. efetuar as configurações de IP dos roteadores através do Netbox
+3. quando todos os hosts tiverem acessíveis, o script será encerrado automaticamente e um arquivo de resultados será salvo em */tmp/results-data-hora.csv*
+4. remova as configurações dos roteadores usando o Netbox
+5. Executar novamente script ***ping_all.py***
+6. configurar manualmente os endereços IPs dos roteadores
+7. quando todos os hosts tiverem acessíveis, o script será encerrado automaticamente e um arquivo de resultados será salvo em */tmp/results-data-hora.csv*
+8. Ligar a interface de NAT para transmitir os resultados
+9. acessar a [página do formulário](https://forms.gle/aawvcpfNzXmvqM5G8) e submeter os arquivos de resultado.
+
+### 1. Inicializando o contador
+
+Dentro da VM net2d-virt, abra uma janela de terminal, acesse a pasta do net2d e execute o script monitor de tempos *ping_all*
+```bash
+cd net2d-lab
+python3 doc/contrib/ping_all.py
+```
+
+
+
+
+# Legado
 ```
 git clone https://github.com/netbox-community/netbox-docker.git
 cd netbox-docker/
