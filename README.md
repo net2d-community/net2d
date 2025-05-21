@@ -4,7 +4,7 @@
 
 O **net2d** é um projeto que visa automatizar a configuração de dispositivos de rede. Atualmente estão suportados apenas dispositivos Mikrotik executando o RouterOS.
 
-Net2D Apresentação
+Net2D Apresentação - [YouTube](https://youtu.be/kPi7YJsS7k0).
 
 [![Net2D Apresentação](https://img.youtube.com/vi/kPi7YJsS7k0/0.jpg)](https://www.youtube.com/watch?v=kPi7YJsS7k0)
 
